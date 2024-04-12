@@ -102,25 +102,15 @@
                 },
                 {
                     "type": "battery",
-                    "template":
-  " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}\uf295
-  \ueb2d ","foreground": "p:battery_foreground","background": "p:battery_background",
+                    "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}\uf295 \ueb2d ",
+                    "foreground": "p:battery_foreground",
+                    "background": "p:battery_background",
                     "background_templates": [
-  
-              "{{if eq
-  \"Charging\" .State.String}}p:battery_charging{{end}}",
-  
-              "{{if and (lt .Percentage 20) (eq
-  \"Discharging\" .State.String)}}p:battery_critical{{end}}",
-  
-              "{{if and (lt .Percentage 50) (eq
-  \"Discharging\" .State.String)}}p:battery_low{{end}}",
-  
-              "{{if eq
-  \"Discharging\" .State.String}}p:battery_discharging{{end}}",
-  
-              "{{if eq
-  \"Full\" .State.String}}p:battery_full{{end}}"
+                        "{{if eq \"Charging\" .State.String}}p:battery_charging{{end}}",
+                        "{{if and (lt .Percentage 20) (eq \"Discharging\" .State.String)}}p:battery_critical{{end}}",
+                        "{{if and (lt .Percentage 50) (eq \"Discharging\" .State.String)}}p:battery_low{{end}}",
+                        "{{if eq \"Discharging\" .State.String}}p:battery_discharging{{end}}",
+                        "{{if eq \"Full\" .State.String}}p:battery_full{{end}}"
                     ],
                     "powerline_symbol": "\ue0b0",
                     "style": "powerline"
@@ -139,45 +129,13 @@
                 },
                 {
                     "type": "git",
-                    "template":
-  " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}
-  \uf044 {
-                        { .Working.String
-                        }
-                    }{
-                        { end
-                        }
-                    }{
-                        { if and (.Working.Changed) (.Staging.Changed)
-                        }
-                    } |{
-                        { end
-                        }
-                    }{
-                        { if .Staging.Changed
-                        }
-                    }
-  \uf046 {
-                        { .Staging.String
-                        }
-                    }{
-                        { end
-                        }
-                    }{
-                        { if gt .StashCount 0
-                        }
-                    }
-  \ueb4b {
-                        { .StashCount
-                        }
-                    }{
-                        { end
-                        }
-                    } ","background": "p:git_background","background_templates": [
-                        "{{ if or (.Working.Changed) (.Staging.Changed) }}p:git_changed{{ end }}",
-                        "{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:git_ahead_and_behind{{ end }}",
-                        "{{ if gt .Ahead 0 }}p:git_ahead{{ end }}",
-                        "{{ if gt .Behind 0 }}p:git_behind{{ end }}"
+                    "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  \uf044 {{ .Working.String}}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed)}} |{{ end}}{{ if .Staging.Changed}}\uf046 {{ .Staging.String}}{{ end}}{{ if gt .StashCount 0}}\ueb4b {{ .StashCount}}{{ end}} ",
+                    "background": "p:git_background",
+                    "background_templates": [
+                        "{{ if or (.Working.Changed) (.Staging.Changed)}}p:git_changed{{ end}}",
+                        "{{ if and (gt .Ahead 0) (gt .Behind 0)}}p:git_ahead_and_behind{{ end}}",
+                        "{{ if gt .Ahead 0}}p:git_ahead{{ end}}",
+                        "{{ if gt .Behind 0}}p:git_behind{{ end}}"
                     ],
                     "foreground": "p:git_foreground",
                     "leading_diamond": "\ue0b6",
