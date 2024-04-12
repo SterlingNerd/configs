@@ -78,7 +78,7 @@
         "timeout": 0,
         "foreground": "p:foreground",
         "style": "plain",
-        "template": "\u279c ",
+        "template": "{{now | date \"15:04:05\"}} \u279c ",
         "type": "text"
     },
     "blocks": [
@@ -174,7 +174,7 @@
                 {
                     "foreground": "p:foreground",
                     "style": "plain",
-                    "template": "\u279c ",
+                    "template": "{{now | date \"15:04:05\"}} \u279c ",
                     "type": "text"
                 }
             ]
