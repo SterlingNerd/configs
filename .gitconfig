@@ -1,0 +1,4 @@
+[core]
+  autocrlf = input
+[alias]
+  hist = log --pretty=format:'%h %ad | [%an] %s%d ' --graph --date=relative
