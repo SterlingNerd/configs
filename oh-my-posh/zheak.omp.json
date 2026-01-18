@@ -91,7 +91,7 @@
                     "alias": "shell",
                     "foreground": "p:shell_foreground",
                     "background": "p:shell_background",
-                    "leading_diamond": "\ue0c5",
+                    "leading_diamond": "\ue0c6",
                     "options": {
                         "macos": "mac"
                     },
