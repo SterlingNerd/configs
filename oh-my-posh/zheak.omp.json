@@ -1,6 +1,6 @@
 {
     "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-    "version": 2,
+    "version": 3,
     "final_space": true,
     "console_title_template": "{{ .Shell }} in {{ .PWD }}",
     "palettes": {
@@ -92,7 +92,7 @@
                     "foreground": "p:shell_foreground",
                     "background": "p:shell_background",
                     "leading_diamond": "\ue0c5",
-                    "properties": {
+                    "options": {
                         "macos": "mac"
                     },
                     "style": "diamond",
@@ -121,7 +121,7 @@
                     "background": "p:path_background",
                     "foreground": "p:path_foreground",
                     "powerline_symbol": "\ue0b0",
-                    "properties": {
+                    "options": {
                         "style": "agnoster_short",
                         "max_depth": 4
                     },
@@ -138,9 +138,10 @@
                         "{{ if gt .Behind 0}}p:git_behind{{ end}}"
                     ],
                     "foreground": "p:git_foreground",
+                    "background": "p:git_background",
                     "leading_diamond": "\ue0b6",
                     "powerline_symbol": "\ue0b0",
-                    "properties": {
+                    "options": {
                         "branch_max_length": 25,
                         "fetch_stash_count": true,
                         "fetch_status": true,
