@@ -2,3 +2,10 @@
   autocrlf = input
 [alias]
   hist = log --pretty=format:'%h %ad | [%an] %s%d ' --graph --date=relative
+  cleanup-force = "!git fetch -p && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -r git branch -D"
+  cleanup = cleanup-force = "!git fetch -p && git branch -vv | grep ': gone]' | awk '{print $1}' | xargs -r git branch -d"
+  nuke = "!git checkout main && git reset --hard origin/main && git clean -df && git gc --prune-now && git pull"
+  nuke-master = "!git checkout master && git reset --hard origin/master && git clean -df && git gc --prune-now && git pull"
+  timestamp = log -1 --format=%ct
+[push]
+  autoSetupRemote = true
