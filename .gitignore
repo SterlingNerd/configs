@@ -2,3 +2,6 @@
 !.gitignore
 !oh-my-posh/
 !git/
+!alacritty/
+!micro/
+!zed/
