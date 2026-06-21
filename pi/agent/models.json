@@ -1,0 +1,10 @@
+{
+  "providers": {
+    "bifrost": {
+      "type": "openai",
+      "baseURL": "http://bifrost.sterling.digital/v1",
+      "apiKey": "sk-bf-57a461e2-49ac-4087-ab9c-eb4563d4cb98"
+    }
+  },
+  "defaultProvider": "bifrost"
+}
