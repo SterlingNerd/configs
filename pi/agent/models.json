@@ -1,10 +1,96 @@
 {
   "providers": {
     "bifrost": {
-      "type": "openai",
-      "baseURL": "http://bifrost.sterling.digital/v1",
-      "apiKey": "sk-bf-57a461e2-49ac-4087-ab9c-eb4563d4cb98"
+      "name": "Bifrost Gateway",
+      "baseUrl": "https://bifrost.sterling.digital/v1",
+      "apiKey": "$BIFROST_API_KEY",
+      "api": "openai-completions",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "models": [
+        {
+          "id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+          "name": "Nemotron 3 Ultra",
+          "reasoning": true,
+          "temperature": 0,
+          "input": ["text"],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 1000000
+        },
+        {
+          "id": "north-mini-code:free",
+          "name": "Cohere North Mini Code - BAD",
+          "reasoning": true,
+          "input": ["text"],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 256000,
+          "maxTokens": 4096,
+          "thinkingLevelMap": {
+            "off": null,
+            "minimal": "low",
+            "low": "medium",
+            "medium": "high",
+            "high": "max",
+            "xhigh": null
+          },
+          "compat": {
+            "requiresToolResultName": false,
+            "supportsDeveloperRole": true,
+            "supportsReasoningEffort": true,
+            "thinkingFormat": "openrouter"
+          }
+        }
+      ]
+    },
+    "local": {
+      "name": "Local Llama",
+      "baseUrl": "http://localhost:11434/v1",
+      "apiKey": "dont care",
+      "api": "openai-completions",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "models": [
+        {
+          "id": "qwen3.6-35b-a3b",
+          "name": "Qwen 3.6 36B A3B",
+          "reasoning": true,
+          "input": ["text"],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 256000,
+          "thinkingLevelMap": {
+            "off": null,
+            "minimal": "low",
+            "low": "medium",
+            "medium": "high",
+            "high": "max",
+            "xhigh": null
+          },
+          "compat": {
+            "requiresToolResultName": false,
+            "supportsDeveloperRole": true,
+            "supportsReasoningEffort": true,
+            "thinkingFormat": "openrouter"
+          }
+        }
+      ]
     }
   },
-  "defaultProvider": "bifrost"
+  "defaultModel": "qwen3.6-35b-a3b"
 }

@@ -1,1 +1,3 @@
-agent/auth.json
+**/auth.json
+agent/sessions/
+pi-acp/session-map.json
