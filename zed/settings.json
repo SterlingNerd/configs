@@ -1,49 +1,29 @@
 {
-  "agent_servers": {
-    "pi-acp": {
-      "type": "registry"
-    }
+  "show_edit_predictions": false,
+  "edit_predictions": {
+    "allow_data_collection": "no"
   },
-  "cli_default_open_behavior": "existing_window",
   "agent": {
-    "default_model": {
-      "provider": "openai",
-      "model": "nvidia/nemotron-3-super-120b-a12b:free",
-      "enable_thinking": true,
-    },
+    "thinking_display": "preview",
+    "play_sound_when_agent_done": "always",
+    "notify_when_agent_waiting": "all_screens",
+    "sidebar_side": "left",
     "favorite_models": [],
-    "model_parameters": [],
-    "tool_permissions": {
-      "default": "confirm",
-      "tools": {
-        "read_file": { "default": "allow" },
-        "find_path": { "default": "allow" },
-        "grep": { "default": "allow" },
-        "list_directory": { "default": "allow" },
-        "terminal": {
-          "default": "confirm",
-          "always_deny": [
-            { "pattern": ">" },
-            { "pattern": ">>" },
-            { "pattern": "rm\\s+" },
-          ],
-        },
+    "model_parameters": []
+  },
+  "agent_servers": {
+    "Pi Agent": {
+      "type": "custom",
+      "command": "npx",
+      "args": ["pi-acp@0.0.31", "acp"],
+      "env": {
+        "PI_ACP_ENABLE_EMBEDDED_CONTEXT": "true",
       },
     },
   },
+  "cli_default_open_behavior": "existing_window",
   "base_keymap": "VSCode",
   "project_panel": {
     "dock": "left",
-  },
-  "language_models": {
-    "openai": {
-      "api_url": "https://bifrost.sterling.digital/v1",
-      "available_models": [
-        {
-          "name": "nvidia/nemotron-3-super-120b-a12b:free",
-          "max_tokens": 256000,
-        },
-      ],
-    },
   },
 }

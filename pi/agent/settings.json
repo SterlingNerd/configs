@@ -13,6 +13,8 @@
     }
   },
   "packages": [
-    "npm:@the-agency/vmpi"
-  ]
+    "npm:@the-agency/vmpi",
+    "npm:pi-loop-police"
+  ],
+  "hideThinkingBlock": true
 }
