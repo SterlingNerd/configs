@@ -3,11 +3,9 @@
 -- Add any additional keymaps here
 
 -- Ctrl+C/V for copy/paste
-vim.keymap.set("v", "<C-c>", 'y', { desc = "Copy to clipboard" })
-vim.keymap.set("n", "<C-v>", '"*p', { desc = "Paste from clipboard" })
+vim.keymap.set("v", "<C-c>", '"+y', { desc = "Copy to clipboard" })
+vim.keymap.set({ "n", "i" }, "<C-v>", '"+p', { desc = "Paste from clipboard" })
 
--- Shift+Ctrl+C/V also work (pass through to terminal)
-vim.keymap.set({ "n", "i" }, "<S-C-C>", "<Nop>")
-vim.keymap.set({ "n", "i" }, "<S-C-V>", "<Nop>")
-
-
+-- Shift+Ctrl+C/V also work
+vim.keymap.set("v", "<C-S-c>", '"+y', { desc = "Copy to clipboard" })
+vim.keymap.set({ "n", "i" }, "<C-S-v>", '"+p', { desc = "Paste from clipboard" })
