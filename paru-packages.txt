@@ -60,4 +60,4 @@ sops
 ttf-jetbrains-mono-nerd
 ttf-fira-code-nerd
 noto-fonts
-noto-fonts-emoji
+noto-fonts-emoji# Updated 2026-07-20
