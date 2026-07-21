@@ -67,3 +67,26 @@ chezmoi git add -A && chezmoi git commit && chezmoi git push  # commit & push
 - The original `~/.config/.git` was backed up to `~/.config/.git.chezmoi-bak` (reversible)
 - `node_modules/` and secrets like `auth.json` are NOT tracked (respecting .gitignore)
 - Private files use chezmoi's `private_` attribute to preserve 0600 permissions
+
+### Package management (Arch/paru)
+
+This repo includes a curated package list for Arch Linux using `paru` (AUR helper):
+
+- **`paru-packages.txt`** — list of packages (one per line, `#` comments supported)
+- **`install-paru-packages.sh`** — script to install missing packages from the list
+
+**Usage:**
+
+```bash
+# From chezmoi source dir
+chezmoi execute-script install-paru-packages.sh
+
+# Or directly
+~/.local/share/chezmoi/install-paru-packages.sh
+```
+
+The script reads `paru-packages.txt`, skips already-installed packages, and installs the rest via `paru -S --needed --noconfirm`.
+
+Both files are in `.chezmoiignore` (not deployed to `~`). Edit `paru-packages.txt` to add/remove packages, then run the script.
+
+> **Tip:** For a fresh Arch install, run this *after* `chezmoi init --apply` to bootstrap your full environment.
