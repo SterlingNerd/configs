@@ -3,3 +3,4 @@ dot_config/pi/agent/private_models-store.json
 install-paru-packages.sh
 paru-packages.txt
 README.md
+run_once_install-paru.sh
