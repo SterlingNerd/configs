@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# run_once_install-paru.sh
-# Runs once per machine on first chezmoi apply.
+# run_onchange_install-paru.sh
+# Re-runs whenever this file changes (e.g. when paru-packages.txt is edited).
 # Reads paru-packages.txt and installs any missing packages via paru.
 
 set -euo pipefail
