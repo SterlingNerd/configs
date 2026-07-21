@@ -1,4 +1,5 @@
-README.md
+agents.md
+dot_config/pi/agent/private_models-store.json
 install-paru-packages.sh
 paru-packages.txt
-agents.md
+README.md

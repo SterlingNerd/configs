@@ -2,7 +2,7 @@
   "lastChangelogVersion": "0.80.10",
   "theme": "dark",
   "defaultProvider": "openrouter",
-  "defaultModel": "tencent/hy3:free",
+  "defaultModel": "nvidia/nemotron-3-ultra-550b-a55b:free",
   "defaultThinkingLevel": "high",
   "retry": {
     "enabled": true,

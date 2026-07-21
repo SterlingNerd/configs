@@ -1,81 +1,70 @@
-# Agent Instructions for chezmoi Package Management
+# Agent Maintenance Instructions
 
-This file instructs AI agents (like me) on how to maintain the package installation script and list.
+This document instructs AI agents on how to maintain the package management system in this chezmoi repo.
 
-## Files to maintain
+## Package Management Files
 
-| File | Purpose | Trigger |
-|------|---------|---------|
-| `paru-packages.txt` | Source of truth: list of packages to ensure installed | Edit to add/remove packages |
-| `run_onchange_install-paru.sh.tmpl` | Chezmoo template script that runs on package list changes | Auto-runs when `paru-packages.txt` changes |
-| `install-paru-packages.sh` | Standalone script for manual execution (`chezmoi execute-script`) | Run manually anytime |
+| File | Purpose | Managed by |
+|------|---------|------------|
+| `paru-packages.txt` | Source list of packages for Arch/paru | Human / Agent |
+| `install-paru-packages.sh` | Script that reads list and installs missing packages | Agent (update when logic changes) |
+| `.chezmoiignore` | Excludes package files from deployment | Agent |
 
-## How the onchange script works
+## When to Update `paru-packages.txt`
 
-1. `run_onchange_install-paru.sh.tmpl` is a **chezmoi template** (`.tmpl` extension)
-2. It embeds the package list from `paru-packages.txt` at template-render time
-3. When `paru-packages.txt` changes → template renders differently → chezmoi detects script content changed → runs it on next `apply`
-4. The script checks each package with `pacman -Q` / `paru -Q` and installs only missing ones
+**Add a package when:**
+- User explicitly requests a new tool be installed
+- A config file references a binary not in the list
+- Setting up a new machine reveals a missing dependency
 
-## Maintenance rules for agents
+**Remove a package when:**
+- User explicitly requests removal
+- Package is replaced by another (note the replacement in commit)
+- Package is deprecated/unmaintained
 
-### When user asks to add/remove packages:
-1. Edit `paru-packages.txt` (add/remove lines, keep alphabetical-ish grouping)
-2. Commit the change — the onchange script will auto-run on next `chezmoi apply`
-3. No need to touch the script files unless logic changes
+**Format rules:**
+- One package per line
+- Official repo packages: bare name (e.g., `neovim`)
+- AUR packages: bare name (paru handles both)
+- Group related packages with `# Category` comments
+- Keep alphabetical within categories
+- No inline comments on package lines
 
-### When user reports script issues:
-1. Check `run_onchange_install-paru.sh.tmpl` for bugs
-2. Test locally with `chezmoi execute-template run_onchange_install-paru.sh.tmpl`
-3. Fix and commit
+## When to Update `install-paru-packages.sh`
 
-### When adding new package categories:
-1. Add comment header in `paru-packages.txt` (e.g., `# New category`)
-2. List packages below
-3. Keep AUR packages commented by default with note
+Update the script when:
+- paru/pacman flags change
+- Need to support additional package managers (brew, apt, etc.)
+- Installation logic needs improvement (parallel, better output, etc.)
+- Add dry-run / verbose flags
 
-### Version pinning:
-- Do NOT pin versions in `paru-packages.txt` (use package names only)
-- `paru -S --needed` handles updates
-- If specific version needed, add comment: `# package-name (pinned to x.y.z for reason)`
+**Do NOT modify the script just to add/remove packages** — that's what `paru-packages.txt` is for.
 
-### Security:
-- Never add packages from untrusted sources without user confirmation
-- AUR packages are built from source — flag any that seem suspicious
-- Prefer official repos (`pacman`) over AUR when equivalent exists
+## Workflow for Agents
 
-## Testing locally
+1. **User asks to add package** → Edit `paru-packages.txt`, commit, push
+2. **User runs `chezmoi apply`** → Script runs automatically (via `run_onchange_`), installs missing
+3. **User asks to remove package** → Edit `paru-packages.txt` (remove line), commit. Note: script doesn't auto-remove; user must `paru -R` manually if desired
 
-```bash
-# Dry-run the template (shows what would run)
-chezmoi execute-template run_onchange_install-paru.sh.tmpl
-
-# Manual run of standalone script
-chezmoi execute-script install-paru-packages.sh
-
-# Full apply (runs onchange scripts)
-chezmoi apply -v
-```
-
-## Common commands for agents
+## Testing Changes
 
 ```bash
-# View current package list
-cat ~/.local/share/chezmoi/paru-packages.txt
+# Dry run (show what would be installed)
+cd ~/.local/share/chezmoi
+./install-paru-packages.sh  # safe to run, only installs missing
 
-# Add a package (example)
-echo "new-package" >> ~/.local/share/chezmoi/paru-packages.txt
-
-# Remove a package
-sed -i '/^new-package$/d' ~/.local/share/chezmoi/paru-packages.txt
-
-# Commit changes
-cd ~/.local/share/chezmoi && git add -A && git commit -m "pkg: add new-package"
+# Verify package list syntax
+grep -E '^[^#[:space:]]' paru-packages.txt | sort -u
 ```
 
-## Notes
+## Current Package Categories
 
-- Both scripts are in `.chezmoiignore` — NOT deployed to `~`
-- `CHEZMOI_SOURCE_DIR` env var available in scripts (points to `~/.local/share/chezmoi`)
-- `paru` must be installed first (bootstrap: `sudo pacman -S --needed base-devel git && git clone https://aur.archlinux.org/paru.git && cd paru && makepkg -si`)
-- On fresh Arch install: install `paru` first, then `chezmoi init --apply`, then `chezmoi apply` runs the onchange script
+- Terminal & shell
+- Editors
+- Git & GitHub
+- Development tools
+- Containers & VMs
+- Utilities
+- Fonts
+
+Keep categories in this order when adding packages.

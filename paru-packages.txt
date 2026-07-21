@@ -5,7 +5,7 @@
 # Terminal & shell
 alacritty
 zsh
-starship
+oh-my-posh
 fzf
 ripgrep
 fd
@@ -61,11 +61,3 @@ ttf-jetbrains-mono-nerd
 ttf-fira-code-nerd
 noto-fonts
 noto-fonts-emoji
-
-# GUI Apps (AUR)
-# visual-studio-code-bin
-# google-chrome
-# 1password
-# slack-desktop
-# spotify
-# discord
