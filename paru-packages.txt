@@ -1,0 +1,63 @@
+# Packages to install via paru (Arch/Manjaro AUR helper)
+# One package per line. Lines starting with # are comments.
+# Edit this list, then run `chezmoi apply` to install new packages.
+
+# Terminal & shell
+alacritty
+zsh
+oh-my-posh
+fzf
+ripgrep
+fd
+bat
+eza
+zoxide
+direnv
+
+# Editors
+neovim
+zed
+micro
+
+# Git & GitHub
+git
+github-cli
+lazygit
+
+# Development tools
+nodejs
+npm
+pnpm
+python
+pipx
+rustup
+go
+lua
+luarocks
+
+# Containers & VMs
+docker
+docker-compose
+podman
+
+# Utilities
+btop
+htop
+jq
+yq
+tmux
+stow
+unzip
+zip
+wget
+curl
+gnupg
+pass
+age
+sops
+
+# Fonts
+ttf-jetbrains-mono-nerd
+ttf-fira-code-nerd
+noto-fonts
+noto-fonts-emoji
