@@ -29,7 +29,7 @@ nodejs
 npm
 pnpm
 python
-pipx
+python-pipx
 rustup
 go
 lua
@@ -58,6 +58,6 @@ sops
 
 # Fonts
 ttf-jetbrains-mono-nerd
-ttf-fira-code-nerd
+ttf-firacode-nerd
 noto-fonts
 noto-fonts-emoji# Updated 2026-07-20
