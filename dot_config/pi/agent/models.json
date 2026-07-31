@@ -1,58 +1,5 @@
 {
   "providers": {
-    "bifrost": {
-      "name": "Bifrost Gateway",
-      "baseUrl": "https://bifrost.sterling.digital/v1",
-      "apiKey": "$BIFROST_API_KEY",
-      "api": "openai-completions",
-      "headers": {
-        "Content-Type": "application/json"
-      },
-      "models": [
-        {
-          "id": "nvidia/nemotron-3-ultra-550b-a55b:free",
-          "name": "Nemotron 3 Ultra",
-          "reasoning": true,
-          "temperature": 0,
-          "input": ["text"],
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          },
-          "contextWindow": 1000000
-        },
-        {
-          "id": "north-mini-code:free",
-          "name": "Cohere North Mini Code - BAD",
-          "reasoning": true,
-          "input": ["text"],
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          },
-          "contextWindow": 256000,
-          "maxTokens": 4096,
-          "thinkingLevelMap": {
-            "off": null,
-            "minimal": "low",
-            "low": "medium",
-            "medium": "high",
-            "high": "max",
-            "xhigh": null
-          },
-          "compat": {
-            "requiresToolResultName": false,
-            "supportsDeveloperRole": true,
-            "supportsReasoningEffort": true,
-            "thinkingFormat": "openrouter"
-          }
-        }
-      ]
-    },
     "local": {
       "name": "Local Llama",
       "baseUrl": "http://localhost:11434/v1",
