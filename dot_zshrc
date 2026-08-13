@@ -1,0 +1,22 @@
+# Oh-my-posh prompt (same theme as fish for consistency)
+eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/zheak.omp.json)"
+
+# Additional completions (from pacman package)
+fpath+=/usr/share/zsh/site-functions
+autoload -U compinit && compinit
+
+
+
+source /usr/share/cachyos-zsh-config/cachyos-config.zsh
+export EDITOR="zed --wait"
+export VISUAL="zed --wait"
+
+# Permanently point pi and vmpi to the concrete configuration directory
+export PI_CONFIG_DIR="$HOME/.config/pi"
+export PI_CODING_AGENT_DIR="$HOME/.config/pi/agent"
+
+# NVM
+export NVM_DIR="/usr/share/nvm"
+[ -s /usr/share/nvm/init-nvm.sh ] && . /usr/share/nvm/init-nvm.sh
+
+
