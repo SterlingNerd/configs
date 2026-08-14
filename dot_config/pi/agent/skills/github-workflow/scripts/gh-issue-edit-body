@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+# Edit an issue body by appending or replacing sections.
+#
+# Usage:
+#   # Append a section (creates it if missing)
+#   gh-issue-edit-body 42 --section "## Acceptance Criteria" < ac.md
+#
+#   # Replace a section (deletes old, writes new)
+#   gh-issue-edit-body 42 --replace "## Problem" < problem.md
+#
+#   # Append raw text (no section header)
+#   gh-issue-edit-body 42 --append < notes.md
+#
+#   # Replace entire body
+#   gh-issue-edit-body 42 --full < body.md
+
+set -euo pipefail
+
+ISSUE_NUM=""
+SECTION=""
+REPLACE_SECTION=""
+APPEND=0
+FULL=0
+NEW_BODY=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    [0-9]*)
+      ISSUE_NUM="$1"; shift ;;
+    --section)
+      SECTION="$2"; shift 2 ;;
+    --replace)
+      REPLACE_SECTION="$2"; shift 2 ;;
+    --append)
+      APPEND=1; shift ;;
+    --full)
+      FULL=1; shift ;;
+    *)
+      echo "Unknown option: $1" >&2; exit 1 ;;
+  esac
+done
+
+if [[ -z "$ISSUE_NUM" ]]; then
+  echo "Error: issue number is required (positional arg)" >&2
+  exit 1
+fi
+
+# Read new content from stdin or file
+if [[ ! -t 0 ]]; then
+  NEW_CONTENT=$(cat)
+else
+  echo "Error: provide content via stdin" >&2
+  exit 1
+fi
+
+# Get current body
+CURRENT=$(gh issue view "$ISSUE_NUM" --json body --jq '.body')
+
+if [[ $FULL -eq 1 ]]; then
+  gh issue edit "$ISSUE_NUM" --body "$NEW_CONTENT"
+  echo "Updated issue #$ISSUE_NUM (full body replaced)"
+  exit 0
+fi
+
+if [[ $APPEND -eq 1 ]]; then
+  # Append with blank line separator
+  UPDATED="${CURRENT}"$'\n\n'"${NEW_CONTENT}"
+  gh issue edit "$ISSUE_NUM" --body "$UPDATED"
+  echo "Appended to issue #$ISSUE_NUM"
+  exit 0
+fi
+
+if [[ -n "$SECTION" ]]; then
+  # Append section (creates if missing)
+  UPDATED="${CURRENT}"$'\n\n'"${SECTION}"$'\n\n'"${NEW_CONTENT}"
+  gh issue edit "$ISSUE_NUM" --body "$UPDATED"
+  echo "Added section '$SECTION' to issue #$ISSUE_NUM"
+  exit 0
+fi
+
+if [[ -n "$REPLACE_SECTION" ]]; then
+  # Replace existing section or append if not found
+  # Use python for reliable multi-line section replacement
+  UPDATED=$(python3 -c "
+import sys, re
+
+current = sys.stdin.read()
+new_content = '''$NEW_CONTENT'''
+section_header = '$REPLACE_SECTION'
+
+# Try to find and replace the section
+pattern = r'(' + re.escape(section_header) + r'\n)(.*?)(?=\n## |\Z)'
+match = re.search(pattern, current, re.DOTALL)
+
+if match:
+    # Replace existing section content
+    updated = current[:match.start(2)] + new_content + current[match.end(2):]
+else:
+    # Section doesn't exist, append it
+    updated = current + '\n\n' + section_header + '\n\n' + new_content
+
+print(updated, end='')
+" <<< "$CURRENT")
+
+  gh issue edit "$ISSUE_NUM" --body "$UPDATED"
+  echo "Replaced section '$REPLACE_SECTION' in issue #$ISSUE_NUM"
+  exit 0
+fi
+
+echo "Error: specify --section, --replace, --append, or --full" >&2
+exit 1

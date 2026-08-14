@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# Create a GitHub issue from a short description. Generates a structured body
+# with Problem, Proposed Solution, and Acceptance Criteria sections.
+#
+# Usage:
+#   gh-issue-from-desc --title "Fix memory leak" --desc "Leak in parser when handling null input" \
+#                      --type bug [--label critical]
+#   gh-issue-from-desc --title "Split run_instance" --desc "CC=40, 280 LOC, needs refactoring" \
+#                      --type refactor
+#
+# Types: bug, feature, refactor, chore, docs
+# Each type gets a pre-built template with relevant sections.
+
+set -euo pipefail
+
+TITLE=""
+DESC=""
+TYPE="bug"
+LABELS=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --title)   TITLE="$2"; shift 2 ;;
+    --desc)    DESC="$2"; shift 2 ;;
+    --type)    TYPE="$2"; shift 2 ;;
+    --label)   LABELS+=("$2"); shift 2 ;;
+    *)         echo "Unknown option: $1" >&2; exit 1 ;;
+  esac
+done
+
+if [[ -z "$TITLE" || -z "$DESC" ]]; then
+  echo "Error: --title and --desc are required" >&2
+  exit 1
+fi
+
+# Default labels by type
+case "$TYPE" in
+  bug)       LABELS+=("bug") ;;
+  feature)   LABELS+=("enhancement") ;;
+  refactor)  LABELS+=("tech-debt") ;;
+  chore)     LABELS+=("chore") ;;
+  docs)      LABELS+=("docs") ;;
+esac
+
+# Build the body from template
+BODY=$(cat <<TEMPLATE
+## Problem
+
+$DESC
+
+## Proposed Solution
+
+(Describe what should change and why.)
+
+## Acceptance Criteria
+
+- [ ] (Define measurable outcomes)
+TEMPLATE
+)
+
+# Build gh command
+CMD=("gh" "issue" "create" "--title" "$TITLE" "--body" "$BODY")
+for label in "${LABELS[@]+"${LABELS[@]}"}"; do
+  CMD+=("--label" "$label")
+done
+
+"${CMD[@]}"
