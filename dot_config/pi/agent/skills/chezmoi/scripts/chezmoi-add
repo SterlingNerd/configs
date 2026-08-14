@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# Add a file or directory to chezmoi source state with git commit.
+#
+# Usage:
+#   chezmoi-add <source-path> [--stdin] "commit message"
+#   chezmoi-add ~/.config/nvim/init.lua "feat: add nvim init"
+#   chezmoi-add ~/.config/gh/aliases/ "feat: add gh aliases"
+#   echo "content" | chezmoi-add --stdin dot_config/foo/bar "chore: add bar"
+
+set -euo pipefail
+
+SOURCE_PATH=""
+STDIN=0
+COMMIT_MSG=""
+ARGS=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --stdin)
+      STDIN=1; shift ;;
+    *)
+      ARGS+=("$1"); shift ;;
+  esac
+done
+
+if [[ ${#ARGS[@]} -lt 2 ]]; then
+  echo "Usage: chezmoi-add <source-path> [--stdin] \"commit message\"" >&2
+  exit 1
+fi
+
+SOURCE_PATH="${ARGS[0]}"
+COMMIT_MSG="${ARGS[1]}"
+
+CHEZMOI_SRC="$HOME/.local/share/chezmoi"
+
+if [[ ! -d "$CHEZMOI_SRC" ]]; then
+  echo "Error: chezmoi source not found at $CHEZMOI_SRC" >&2
+  exit 1
+fi
+
+cd "$CHEZMOI_SRC"
+
+if [[ $STDIN -eq 1 ]]; then
+  # Read from stdin, write to the specified source path
+  DEST="$SOURCE_PATH"
+  mkdir -p "$(dirname "$DEST")"
+  cat > "$DEST"
+  echo "Added from stdin: $DEST"
+else
+  # Copy file or directory
+  if [[ ! -e "$SOURCE_PATH" ]]; then
+    echo "Error: source path does not exist: $SOURCE_PATH" >&2
+    exit 1
+  fi
+
+  # Determine destination relative to chezmoi source
+  # If source is under ~/.config, strip it and add dot_ prefix
+  DEST=$(realpath "$SOURCE_PATH")
+  if [[ "$DEST" == "$HOME/.config/"* ]]; then
+    REL="${DEST#$HOME/.config/}"
+    DEST="dot_config/$REL"
+  elif [[ "$DEST" == "$HOME/."* ]]; then
+    FILENAME="${DEST##*/}"
+    DEST="dot_${FILENAME}"
+  fi
+
+  # Create parent dirs and copy
+  mkdir -p "$(dirname "$DEST")"
+  if [[ -d "$SOURCE_PATH" ]]; then
+    cp -r "$SOURCE_PATH"/. "$DEST"/ 2>/dev/null || cp -r "$SOURCE_PATH" "$DEST"
+  else
+    cp "$SOURCE_PATH" "$DEST"
+  fi
+
+  # Preserve executable bit
+  if [[ -x "$SOURCE_PATH" ]]; then
+    chmod +x "$DEST"
+  fi
+
+  echo "Added: $DEST"
+fi
+
+# Git add, commit, push
+git add "$(dirname "$DEST")"
+git commit -m "$COMMIT_MSG" && git push || true
