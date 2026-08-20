@@ -35,9 +35,9 @@ Secret files (`models-store.json`, `zed/settings.json`) are deployed with `0600`
 
 ## Package management (Arch)
 
-A curated package list lives in `paru-packages.txt`. The `run_install-paru.sh` script runs on every `chezmoi apply` and installs any missing packages via `paru`.
+A curated package list lives in `shelly-packages.txt`. The `run_onchange_install-shelly-packages.sh` script runs on every `chezmoi apply` and installs any missing packages via `shelly` (standard repos first, then AUR).
 
-To add a package, just add it to `paru-packages.txt` — it'll be installed on the next apply.
+To add a package, just add it to `shelly-packages.txt` — it'll be installed on the next apply.
 
 ## How chezmoi works
 
