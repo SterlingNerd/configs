@@ -146,7 +146,7 @@
         },
         {
           "type": "battery",
-          "template": "{{ if eq .State.String \"Full\" }}{{ .Icon }}{{ else }}{{ .Icon }} {{ .Percentage }}{{ end }}{{ .Error }}\uf295 \ueb2d ",
+          "template": "{{ .Icon }} {{ .Percentage }}%{{ .Error }}\uf295 \ueb2d ",
           "foreground": "p:battery_foreground",
           "background": "p:battery_background",
           "background_templates": [
