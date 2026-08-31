@@ -146,7 +146,7 @@
         },
         {
           "type": "battery",
-          "template": "{{ .Icon }} {{ .Percentage }}%{{ .Error }}\uf295 \ueb2d ",
+          "template": "{{ .Icon }} {{ .Percentage }}\uf295{{ .Error }}",
           "foreground": "p:battery_foreground",
           "background": "p:battery_background",
           "background_templates": [
