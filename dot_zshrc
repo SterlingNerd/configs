@@ -16,6 +16,6 @@ export PI_CODING_AGENT_DIR="$HOME/.config/pi/agent"
 
 # NVM
 export NVM_DIR="/usr/share/nvm"
-[ -s /usr/share/nvm/init-nvm.sh ] && . /usr/share/nvm/init-nvm.sh
+[ -s /usr/share/nvm/init-nvm.sh ] && . /usr/share/nvm/init-nvm.sh || true
 
 
