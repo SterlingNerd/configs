@@ -177,3 +177,4 @@ dot_config/git/config.tmpl
 - **Template errors** — Check `.tmpl` files for Go template syntax
 - **`.chezmoiignore` alone doesn't stop tracking** — If a file is already in source state, you must remove it first (delete from source dir + add to ignore)
 - **`chezmoi apply` fails with TTY errors** — May be caused by encrypted files or interactive prompts. Check `chezmoi diff` for details
+- **Avoid manual install scripts** — Prefer adding packages to `shelly-packages.txt` or `paru-packages.txt` rather than writing custom install scripts. System packages are managed by the package manager and will be tracked properly.
