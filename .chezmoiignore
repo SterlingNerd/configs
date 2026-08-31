@@ -1,5 +1,8 @@
 agents.md
 dot_config/pi/agent/private_models-store.json
 install-paru-packages.sh
+install-shelly-packages.sh
 paru-packages.txt
 README.md
+run_onchange_install-shelly-packages.sh
+shelly-packages.txt
