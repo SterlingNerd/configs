@@ -2,3 +2,5 @@ agents.md
 dot_config/pi/agent/private_models-store.json
 paru-packages.txt
 README.md
+dot_config/kglobalshortcutsrc
+dot_config/nvim/lazy-lock.json

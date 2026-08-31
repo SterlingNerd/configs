@@ -7,7 +7,6 @@ autoload -U compinit && compinit
 
 
 
-source /usr/share/cachyos-zsh-config/cachyos-config.zsh
 export EDITOR="zed --wait"
 export VISUAL="zed --wait"
 
