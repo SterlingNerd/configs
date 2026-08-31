@@ -25,6 +25,7 @@ github-cli
 lazygit
 
 # Development tools
+nvm
 nodejs
 npm
 pnpm
