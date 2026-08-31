@@ -146,7 +146,7 @@
         },
         {
           "type": "battery",
-          "template": "{{ if .Full }}{{ .Icon }}{{ else }}{{ .Icon }} {{ .Percentage }}{{ end }}{{ .Error }}  ",
+          "template": "{{ if eq .State.String \"Full\" }}{{ .Icon }}{{ else }}{{ .Icon }} {{ .Percentage }}{{ end }}{{ .Error }}\uf295 \ueb2d ",
           "foreground": "p:battery_foreground",
           "background": "p:battery_background",
           "background_templates": [
@@ -182,7 +182,6 @@
             "{{ if gt .Behind 0}}p:git_behind{{ end}}"
           ],
           "foreground": "p:git_foreground",
-          "background": "p:git_background",
           "style": "powerline",
           "powerline_symbol": "\ue0b0"
         },
@@ -198,7 +197,7 @@
           },
           "style": "powerline",
           "powerline_symbol": "\ue0b0",
-          "template": "{{ if eq .Code 0 }} ✓{{ else }} ⚠{{ end }}",
+          "template": "{{ if eq .Code 0 }} \u2713{{ else }} \u26a0{{ end }}",
           "type": "status"
         }
       ]
