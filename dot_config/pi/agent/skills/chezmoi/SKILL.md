@@ -1,6 +1,6 @@
 ---
 name: chezmoi
-description: Guide for managing dotfiles with chezmoi. Covers source state, apply, file naming conventions (dot_, private_, executable_), adding files, ignoring files, templates, and common workflows. Use when the user says 'chezmoi that', 'add to chezmoi', or asks about dotfile management.
+description: Guide for managing dotfiles with chezmoi. Covers source state, apply, file naming conventions (dot_, private_, executable_), adding files, ignoring files, templates, and common workflows. Use when the user says 'chezmoi that', 'chezmoi it', 'chezmoi push', 'chezmoi pull', 'add to chezmoi', or asks about dotfile management.
 ---
 
 # Chezmoi Skill
@@ -40,13 +40,15 @@ State is stored in `~/.config/chezmoi/chezmoistate.boltdb`.
 | `onchange_` | Run this script when its source file changes | Yes |
 | `create_` | Create on apply, don't track changes | Yes |
 | `once_` | Run once, never again | Yes |
-| `symlink_` | Create symlink on apply | Yes |
 
 ### Common commands
 
 ```bash
 chezmoi source-path                    # Show source directory
 chezmoi add <path>                     # Add file to source state
+chezmoi add --secrets <path>           # Add + scan for secrets (error|ignore|warning)
+chezmoi add --encrypt <path>           # Add + encrypt
+chezmoi add --template <path>          # Add as template
 chezmoi re-add <path>                  # Update source state from on-disk file
 chezmoi apply                          # Apply source state to home
 chezmoi diff                           # Show pending changes (source vs target)
@@ -87,22 +89,34 @@ This copies the current on-disk content back into the source state, preserving a
 
 **Don't** reset to origin/main or manually edit the source file — `chezmoi re-add` does it correctly.
 
-## Workflow: "Chezmoi that"
+## Workflow: "Chezmoi that" / "Chezmoi it"
 
-When the user says "chezmoi that" or "add to chezmoi":
+When the user says "chezmoi that", "chezmoi it", or "add to chezmoi":
 
-1. **Copy** the file(s) into the chezmoi source directory with correct naming
-2. **Git add + commit + push** in the source repo (always `git pull --rebase` first)
-3. Verify with `chezmoi status` or `git status`
+1. **Check if file already exists on disk** (the target). If yes, use `chezmoi re-add <target-path>` instead of copying.
+2. If the file doesn't exist yet, **copy** it into the chezmoi source directory with correct naming.
+3. **Challenge about secrets**: if the file contains tokens, passwords, API keys, or anything sensitive, use `chezmoi add --encrypt` or rename with `private_` prefix.
+4. **Check for secrets**: run `chezmoi add --secrets warning <path>` or `chezmoi diff` to catch anything that shouldn't be public.
+5. **Git add + commit + push** in the source repo (always `git pull --rebase` first).
+6. Verify with `chezmoi status` or `git status`.
 
-### Example: Adding a config file
+### Example: Re-adding a live edit
 
 ```bash
-# 1. Create destination in source repo
+# User edited ~/.config/oh-my-posh/zheak.omp.json directly
+cd ~/.local/share/chezmoi
+chezmoi re-add ~/.config/oh-my-posh/zheak.omp.json
+git add dot_config/oh-my-posh/zheak.omp.json
+git commit -m "feat: update oh-my-posh theme"
+git push
+```
+
+### Example: Adding a new config file
+
+```bash
+# New file not yet on disk, user provided content
 mkdir -p ~/.local/share/chezmoi/dot_config/nvim
 cp ~/.config/nvim/init.lua ~/.local/share/chezmoi/dot_config/nvim/init.lua
-
-# 2. Stage and commit
 cd ~/.local/share/chezmoi
 git add dot_config/nvim/init.lua
 git commit -m "feat: add nvim init"
@@ -120,6 +134,55 @@ git commit -m "feat: add myscript"
 git push
 ```
 
+## Pushing chezmoi
+
+When the user asks to push chezmoi/dotfiles:
+
+1. **cd to source dir**: `cd ~/.local/share/chezmoi`
+2. **Pull first**: `git pull --rebase` — never push without pulling first
+3. **Scan for changes**: `chezmoi diff` (target changes) and `git diff HEAD` (source changes)
+4. **Check for unmanaged files**: `chezmoi unmanaged` — these are files on disk that aren't tracked
+5. **Check for secrets in new files**: `chezmoi add --secrets warning` or manually review
+6. **Challenge about public repo**: ask if any new files contain secrets, tokens, or private data
+7. **Stage, commit, push**: `git add -A && git commit -m "message" && git push`
+8. **Verify**: `git status` should be clean
+
+## Pulling chezmoi
+
+When the user asks to pull chezmoi/dotfiles or set up a new machine:
+
+1. **cd to source dir**: `cd ~/.local/share/chezmoi`
+2. **Pull**: `git pull --rebase`
+3. **Apply**: `chezmoi apply` — this writes all source files to their target locations
+4. **Verify**: `chezmoi diff` should be empty (no pending changes)
+5. **Run onapply scripts**: any `onapply_` scripts run automatically during `chezmoi apply`
+6. **Check for errors**: `chezmoi status` and review any warnings
+
+## Managing package lists
+
+### shelly-packages.txt
+
+Packages to install via shelly (Arch/Manjaro unified package manager).
+
+```bash
+# Edit the package list
+echo "new-package" >> ~/.local/share/chezmoi/shelly-packages.txt
+
+# Remove a package — edit the file and remove the line
+# Then re-add to update source state:
+cd ~/.local/share/chezmoi
+chezmoi re-add ~/.local/share/chezmoi/shelly-packages.txt
+git commit -m "feat: add new-package to shelly-packages"
+git push
+
+# Install after pushing/pulling:
+chezmoi apply
+```
+
+### paru-packages.txt (if applicable)
+
+Same pattern — edit the file, re-add, commit, push.
+
 ## Ignoring files
 
 ### For new files (never tracked)
@@ -136,6 +199,11 @@ agent/sessions/
 
 # Private tokens
 **/auth.json
+
+# Ephemeral/temp files
+**/*.tmp
+**/*.swp
+**/.DS_Store
 ```
 
 ### For already-tracked files
@@ -175,22 +243,6 @@ chezmoi-add ~/.config/gh aliases/ "feat: add gh aliases"
 
 # Add from stdin (for generated content)
 echo "content" | chezmoi-add --stdin dot_config/foo/bar "chore: add bar"
-```
-
-### chezmoi-sync
-
-Sync the entire source repo: add, commit, push in one command.
-
-```bash
-chezmoi-sync "message"
-```
-
-### chezmoi-sync
-
-Sync the entire source repo: add, commit, push in one command.
-
-```bash
-chezmoi-sync "message"
 ```
 
 ## Templates
@@ -247,3 +299,13 @@ Migrate: `git mv run_onchange_X.sh onchange_X.sh` and `git mv run_onapply_X.sh o
 
 To inspect source-state changes: `git diff HEAD -- <source-path>`
 To inspect target changes: `chezmoi diff` or `chezmoi diff --source-path <source-path>`
+
+## Secret handling
+
+Before committing anything to the public repo:
+
+1. **`chezmoi add --secrets warning <path>`** — scans for secrets when adding
+2. **`chezmoi add --encrypt <path>`** — encrypts the file with age
+3. **`private_` prefix** — file is managed by chezmoi but never committed to git
+4. **`.chezmoiignore`** — for files that should never be tracked
+5. **Challenge the user** if a file looks like it contains tokens, passwords, API keys, or private data
