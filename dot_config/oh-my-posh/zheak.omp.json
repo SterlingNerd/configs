@@ -141,7 +141,7 @@
           "background": "p:shell_background",
           "style": "powerline",
           "powerline_symbol": "\ue0b0",
-          "template": "{{.Icon}}",
+          "template": "{{.Icon}} {{ .HostName }}",
           "type": "os"
         },
         {
