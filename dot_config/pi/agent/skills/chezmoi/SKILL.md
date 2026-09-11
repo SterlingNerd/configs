@@ -140,18 +140,17 @@ When the user asks to push chezmoi/dotfiles:
 
 1. **cd to source dir**: `cd ~/.local/share/chezmoi`
 2. **Pull first**: `git pull --rebase` — never push without pulling first
-3. **Review step — flag files in ~ newer than HEAD**:
+3. **Review step — flag dotfiles/configs newer than HEAD**:
    ```bash
    cd ~/.local/share/chezmoi
-   # Find dotfiles in ~ newer than last commit
-   find ~ -maxdepth 3 -newer .git/refs/heads/main -type f \
-     -name '.*' \
-     ! -path '*/node_modules/*' ! -path '*/.git/*' \
-     ! -path '*/.cache/*' ! -path '*/.local/share/*' \
-     ! -path '*/.ssh/known_hosts' \
-     2>/dev/null
+   # Find dotfiles in ~/ and ~/.config/ newer than last commit
+   find ~ -maxdepth 1 \( -newer .git/refs/heads/main -type f -name '.*' -o -newer .git/refs/heads/main -type d -name '.*' \) \
+     -o -path "$HOME/.config/*" -newer .git/refs/heads/main -type f \
+     2>/dev/null | grep -v -E 'node_modules|\.git/|\.cache/|\.local/share/shell|\.config/(discord|slack|zoom|teams|code)/' \
+     | grep -v -E '\.(log|jsonl|json|tmp|swp)$' \
+     | grep -v -E 'Cookies|LEV|GPUCache|Dawn|TransportSecurity|Network.*State|session\.json'
    ```
-   Review each one — should it be committed? If yes, `chezmoi re-add <target-path>` or `chezmoi add <target-path>`.
+   Review each one — should it be committed? If yes, `chezmoi re-add <target-path>` or `chezmoi add <target-path>`. Note: some `~/.*` files are symlinks into `~/.config/` — skip duplicates.
 4. **Scan for changes**: `chezmoi diff` (target changes) and `git diff HEAD` (source changes)
 5. **Check for unmanaged files**: `chezmoi unmanaged` — these are files on disk that aren't tracked
 6. **Check for secrets in new files**: `chezmoi add --secrets warning` or manually review
