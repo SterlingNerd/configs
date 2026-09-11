@@ -140,12 +140,18 @@ When the user asks to push chezmoi/dotfiles:
 
 1. **cd to source dir**: `cd ~/.local/share/chezmoi`
 2. **Pull first**: `git pull --rebase` — never push without pulling first
-3. **Scan for changes**: `chezmoi diff` (target changes) and `git diff HEAD` (source changes)
-4. **Check for unmanaged files**: `chezmoi unmanaged` — these are files on disk that aren't tracked
-5. **Check for secrets in new files**: `chezmoi add --secrets warning` or manually review
-6. **Challenge about public repo**: ask if any new files contain secrets, tokens, or private data
-7. **Stage, commit, push**: `git add -A && git commit -m "message" && git push`
-8. **Verify**: `git status` should be clean
+3. **Review step — flag files newer than HEAD**:
+   ```bash
+   # Find files modified after the last commit (newer than HEAD)
+   find . -newer .git/refs/heads/main -type f ! -path ./.git/* ! -name .git
+   ```
+   Review each one — should it be committed? If yes, `chezmoi re-add` or `chezmoi add` it.
+4. **Scan for changes**: `chezmoi diff` (target changes) and `git diff HEAD` (source changes)
+5. **Check for unmanaged files**: `chezmoi unmanaged` — these are files on disk that aren't tracked
+6. **Check for secrets in new files**: `chezmoi add --secrets warning` or manually review
+7. **Challenge about public repo**: ask if any new files contain secrets, tokens, or private data
+8. **Stage, commit, push**: `git add -A && git commit -m "message" && git push`
+9. **Verify**: `git status` should be clean
 
 ## Pulling chezmoi
 
@@ -179,9 +185,7 @@ git push
 chezmoi apply
 ```
 
-### paru-packages.txt (if applicable)
 
-Same pattern — edit the file, re-add, commit, push.
 
 ## Ignoring files
 
@@ -309,3 +313,4 @@ Before committing anything to the public repo:
 3. **`private_` prefix** — file is managed by chezmoi but never committed to git
 4. **`.chezmoiignore`** — for files that should never be tracked
 5. **Challenge the user** if a file looks like it contains tokens, passwords, API keys, or private data
+6. **bitwarden** — we use bitwarden for secret management. When the user has it set up, secrets should go to bitwarden, not chezmoi.
