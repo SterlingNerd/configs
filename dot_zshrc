@@ -5,6 +5,24 @@ eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/zheak.omp.json)"
 fpath+=/usr/share/zsh/site-functions
 autoload -U compinit && compinit
 
+# Keybindings
+bindkey '^[[H' beginning-of-line
+bindkey '^[[E' end-of-line
+bindkey '^[[1;5C' forward-word
+bindkey '^[[1;5D' backward-word
+bindkey '^[[3~' delete-char
+
+# Syntax highlighting
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# Autosuggestions
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# History substring search (↑/↓ filter)
+source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+
 
 
 export EDITOR="zed --wait"
