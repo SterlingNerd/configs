@@ -3,6 +3,8 @@ name: chezmoi
 description: Guide for managing dotfiles with chezmoi. Covers source state, apply, file naming conventions (dot_, private_, executable_), adding files, ignoring files, templates, and common workflows. Use when the user says 'chezmoi that', 'chezmoi it', 'chezmoi push', 'chezmoi pull', 'add to chezmoi', or asks about dotfile management.
 ---
 
+**⚠️ NEVER run `chezmoi apply --force` without explicit user approval.** It overwrites live dotfiles with the chezmoi source state, destroying any changes made outside chezmoi (e.g., `pi install`, manual edits). Always edit source files and let the user decide when to apply.
+
 # Chezmoi Skill
 
 ## Prerequisites
@@ -121,6 +123,25 @@ When a file exists in chezmoi source but is missing from the live filesystem:
 ```bash
 bash ~/.local/share/chezmoi/dot_config/pi/agent/skills/chezmoi/scripts/chezmoi-review
 ```
+
+## Understanding `chezmoi status` vs `git status`
+
+These show **completely different things**:
+
+| Command | Compares | Shows |
+|---|---|---|
+| `chezmoi status` | **live filesystem** vs **chezmoi source** | Managed files where on-disk ≠ source state |
+| `git status` | **chezmoi source** vs **git HEAD** | Source files not yet committed |
+
+Both must be clean before push:
+```bash
+chezmoi status    # should be empty — no live drift
+git status        # should be empty — nothing to commit
+```
+
+## Pi extension management
+
+When you run `pi install`, it modifies the extension settings file. This is a managed file, so `chezmoi status` will show it as drifted. Use `chezmoi re-add` to sync, then commit.
 
 ## Updating live files back to chezmoi
 
