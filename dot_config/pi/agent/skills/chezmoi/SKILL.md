@@ -3,6 +3,8 @@ name: chezmoi
 description: Guide for managing dotfiles with chezmoi. Covers source state, apply, file naming conventions (dot_, private_, executable_), adding files, ignoring files, templates, and common workflows. Use when the user says 'chezmoi that', 'chezmoi it', 'chezmoi push', 'chezmoi pull', 'add to chezmoi', or asks about dotfile management.
 ---
 
+**⚠️ NEVER run `chezmoi apply --force` without explicit user approval.** It overwrites live dotfiles with the chezmoi source state, destroying any changes made outside chezmoi (e.g., `pi install`, manual edits, package.json updates). Always edit source files and let the user decide when to apply.
+
 # Chezmoi Skill
 
 ## Prerequisites
@@ -121,6 +123,31 @@ When a file exists in chezmoi source but is missing from the live filesystem:
 ```bash
 bash ~/.local/share/chezmoi/dot_config/pi/agent/skills/chezmoi/scripts/chezmoi-review
 ```
+
+## Understanding `chezmoi status` vs `git status`
+
+These show **completely different things**:
+
+| Command | Compares | Shows |
+|---|---|---|
+| `chezmoi status` | **live filesystem** vs **chezmoi source** | Managed files where on-disk ≠ source state |
+| `git status` | **chezmoi source** vs **git HEAD** | Source files not yet committed |
+
+**Example:** After `pi install`, `chezmoi status` shows `M .config/pi/agent/settings.json` (live file changed). `git status` is clean (nothing committed yet). After editing a chezmoi source file manually, `git status` shows the change but `chezmoi status` is clean (source matches live).
+
+**Both must be clean before push:**
+```bash
+chezmoi status    # should be empty — no live drift
+git status        # should be empty — nothing to commit
+```
+
+## Important: `package.json` is NOT managed by chezmoi
+
+The file `~/.config/pi/agent/npm/package.json` (npm dependencies for pi extensions) is **not tracked by chezmoi**. Changes from `pi install` update settings.json but do NOT modify package.json.
+
+- `pi install` → updates `settings.json` packages array + installs to `node_modules`
+- `package.json` → tracks exact versions, but lives outside chezmoi
+- If you want package.json tracked, add the npm directory to chezmoi source
 
 ## Updating live files back to chezmoi
 
