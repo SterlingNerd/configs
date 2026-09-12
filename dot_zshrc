@@ -1,6 +1,9 @@
 # Oh-my-posh prompt (same theme as fish for consistency)
 eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/zheak.omp.json)"
 
+# Add ~/.local/bin to PATH (for user-installed symlinks)
+export PATH="$HOME/.local/bin:$PATH"
+
 # Additional completions (from pacman package)
 fpath+=/usr/share/zsh/site-functions
 autoload -U compinit && compinit
