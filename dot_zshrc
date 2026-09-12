@@ -5,6 +5,12 @@ eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/zheak.omp.json)"
 fpath+=/usr/share/zsh/site-functions
 autoload -U compinit && compinit
 
+# Fish-style arrow-key selection menu
+zstyle ':completion:*' menu select
+
+# Case-insensitive tab completion
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+
 # Keybindings
 bindkey '^[[H' beginning-of-line
 bindkey '^[[E' end-of-line

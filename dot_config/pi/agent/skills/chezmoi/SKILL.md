@@ -74,6 +74,54 @@ chezmoi git <args>                     # Run git in source directory
 
 **`chezmoi destroy <target-path>`** — Remove from chezmoi source state AND delete the target file. Use this when you want to completely remove the file.
 
+## Detecting uncommitted / drifted changes
+
+Before committing or pushing, always check for drift across three layers:
+
+```bash
+cd ~/.local/share/chezmoi
+
+# 1. chezmoi-managed files whose live state differs from source
+chezmoi status
+
+# 2. chezmoi source changes not yet committed
+git status
+
+# 3. Files on disk newer than HEAD that aren't tracked
+find ~ -maxdepth 1 -newer .git/refs/heads/main -type f 2>/dev/null
+find ~/.config -newer .git/refs/heads/main -type f 2>/dev/null
+
+# 4. Files on disk that chezmoi doesn't manage at all
+chezmoi unmanaged
+
+# 5. Files in chezmoi source that are MISSING from live filesystem
+git ls-files --deleted 2>/dev/null || true
+# Or: find files in the source dir that have no corresponding target
+```
+
+**Interpreting results:**
+
+| Output | Meaning | Action |
+|---|---|---|
+| `chezmoi status` shows `M` | Live file ≠ source state | `chezmoi re-add <path>` to sync source, or `chezmoi apply` to overwrite live |
+| `git status` shows changes | Source edited but not committed | `git add && git commit` |
+| `find` files newer than HEAD | Files changed after last commit but not in chezmoi | `chezmoi add <path>` |
+| `chezmoi unmanaged` | Files on disk, not tracked | Decide: add to chezmoi, ignore, or leave alone |
+| Source file exists but target is **missing** | User deleted the live file | **Ask the user**: remove from chezmoi (`chezmoi destroy`) or restore? |
+
+**Handling deleted targets:**
+
+When a file exists in chezmoi source but is missing from the live filesystem:
+
+1. **Ask the user**: "You deleted `~/.config/foo/bar`. Intentional (remove from chezmoi) or accidental (restore)?"
+2. **If intentional**: `chezmoi destroy ~/.config/foo/bar` — removes from both source and disk
+3. **If accidental**: `chezmoi apply` — restores from source
+
+**Quick one-liner for all of the above:**
+```bash
+bash ~/.local/share/chezmoi/dot_config/pi/agent/skills/chezmoi/scripts/chezmoi-review
+```
+
 ## Updating live files back to chezmoi
 
 When you've edited a file on disk (the target) and want to update the chezmoi source state to match:
@@ -168,6 +216,29 @@ When the user asks to pull chezmoi/dotfiles or set up a new machine:
 4. **Verify**: `chezmoi diff` should be empty (no pending changes)
 5. **Run onapply scripts**: any `onapply_` scripts run automatically during `chezmoi apply`
 6. **Check for errors**: `chezmoi status` and review any warnings
+
+## Managing pi extensions
+
+Extensions are installed via the `pi` CLI, **not** `chezmoi add`:
+
+```bash
+# Install (adds to settings.json + installs npm package)
+pi install npm:@foo/bar
+
+# Remove
+pi remove npm:@foo/bar
+
+# List installed
+pi list
+```
+
+**Where `pi install` writes:**
+- Settings: `~/.config/pi/agent/settings.json` → adds to `packages` array
+- Package: `~/.config/pi/agent/npm/node_modules/<package>`
+
+**Syncing with chezmoi:** After `pi install`, `chezmoi status` will show `M .config/pi/agent/settings.json`. Commit the settings.json change — the npm package itself is installed separately.
+
+**Untracked npm packages:** If a package exists in `node_modules` but not in settings.json `packages`, it was installed manually (e.g., `npm install`). Run `pi install npm:<package>` to register it properly.
 
 ## Managing package lists
 

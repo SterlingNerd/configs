@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.82.1",
+  "lastChangelogVersion": "0.85.1",
   "theme": "dark",
   "defaultProvider": "local",
   "defaultModel": "qwen3.6-35b-a3b",
@@ -14,7 +14,21 @@
   },
   "packages": [
     "npm:pi-loop-police",
-    "npm:pi-openrouter-realtime"
+    "npm:pi-openrouter-realtime",
+    "npm:pi-llama-cpp",
+    "npm:@dietrichgebert/ponytail",
+    "npm:@deevus/pi-wayfinder",
+    "npm:pi-smart-web-search",
+    "npm:pi-image-tools"
   ],
-  "hideThinkingBlock": false
+  "hideThinkingBlock": false,
+  "llamaSettings": {
+    "servers": [
+      {
+        "url": "http://10.0.42.2:11434",
+        "id": "local",
+        "name": "Local (Blazar)"
+      }
+    ]
+  }
 }

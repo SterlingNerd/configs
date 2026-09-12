@@ -16,8 +16,6 @@ direnv
 
 # Editors
 neovim
-zed
-micro
 
 # Git & GitHub
 git
@@ -28,7 +26,6 @@ lazygit
 nvm
 nodejs
 npm
-pnpm
 python
 python-pipx
 rustup
@@ -47,7 +44,6 @@ htop
 jq
 yq
 tmux
-stow
 unzip
 zip
 wget
@@ -62,3 +58,4 @@ ttf-jetbrains-mono-nerd
 ttf-firacode-nerd
 noto-fonts
 noto-fonts-emoji
+
