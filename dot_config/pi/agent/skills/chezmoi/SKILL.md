@@ -97,17 +97,15 @@ agent/sessions/
 
 If a file is already in chezmoi's source state, adding it to `.chezmoiignore` alone won't work. You must:
 
-1. **Remove from source state**: Delete the source file (or use `chezmoi forget`)
+1. **Remove from source state**: `chezmoi forget <target-path>`
 2. **Add to .chezmoiignore**: Add the pattern so it stays ignored going forward
-3. **Commit both changes**
+3. **Commit**: `chezmoi git add -A && chezmoi git commit -m "chore: ignore <file>"`
 
 Example — ignoring `lazy-lock.json`:
 ```bash
-chezmoi cd
-rm dot_config/nvim/lazy-lock.json
+chezmoi forget ~/.config/nvim/lazy-lock.json
 echo "dot_config/nvim/lazy-lock.json" >> .chezmoiignore
-chezmoi git add .chezmoiignore dot_config/nvim/lazy-lock.json
-chezmoi git commit -m "chore: ignore nvim lazy-lock.json"
+chezmoi git add -A && chezmoi git commit -m "chore: ignore nvim lazy-lock.json"
 ```
 
 ## Scripts & package management
