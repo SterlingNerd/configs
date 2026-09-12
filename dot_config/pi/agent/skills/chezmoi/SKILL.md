@@ -7,7 +7,7 @@ description: Guide for managing dotfiles with chezmoi. Use when the user says 'c
 
 ## TL;DR
 
-Chezmoi is a dotfile manager. You maintain a source directory (`~/.local/share/chezmoi`) that defines your dotfiles. Running `chezmoi apply` writes them to your home directory with the correct paths, permissions, and attributes. Changes are tracked in git.
+Chezmoi is a dotfile manager. It maintains a working tree of a git repository to manage your dotfiles. Running commands like `chezmoi re-add` and `chezmoi apply` are conceptually equivelant to git operations but allow more flexibility and scripting hooks rather than just manually using a git repo.
 
 ## Core commands
 
