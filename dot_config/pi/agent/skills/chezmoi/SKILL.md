@@ -32,7 +32,7 @@ See `chezmoi <command> --help` for less common operations.
 Run the review script for a full drift report:
 
 ```bash
-bash ~/.local/share/chezmoi/dot_config/pi/agent/skills/chezmoi/scripts/chezmoi-review
+bash scripts/chezmoi-review
 ```
 
 It checks: managed file drift, uncommitted source changes, files newer than HEAD, unmanaged files, and missing targets.
@@ -58,7 +58,7 @@ When the user says "chezmoi that", "chezmoi it", or "add to chezmoi":
 ## Pushing chezmoi
 
 1. **Pull first**: `chezmoi git pull --rebase`
-2. **Review drift**: `bash ~/.local/share/chezmoi/dot_config/pi/agent/skills/chezmoi/scripts/chezmoi-review`
+2. **Review drift**: `bash scripts/chezmoi-review`
 3. **Challenge about secrets**: ask if any new files contain tokens, passwords, or private data
 4. **Stage, commit, push**: `chezmoi git add -A && chezmoi git commit -m "message" && chezmoi git push`
 5. **Verify**: `chezmoi git status` should be clean
@@ -74,7 +74,7 @@ When the user says "chezmoi that", "chezmoi it", or "add to chezmoi":
 
 ### For new files (never tracked)
 
-Add patterns to `~/.local/share/chezmoi/.chezmoiignore`. Patterns are relative to the source directory.
+Add patterns to `.chezmoiignore`. Patterns are relative to the source directory.
 
 Common patterns:
 ```
