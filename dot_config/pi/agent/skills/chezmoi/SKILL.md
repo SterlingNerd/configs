@@ -57,11 +57,17 @@ When the user says "chezmoi that", "chezmoi it", or "add to chezmoi":
 
 ## Pushing chezmoi
 
-1. **Pull first**: `chezmoi git pull --rebase`
+1. **Pull first**: `chezmoi update` (native chezmoi pull + apply; use `chezmoi git` only for staging/committing). **Never** use `--force` — if it flags conflicts, show them to the user and review together.
 2. **Review drift**: `bash scripts/chezmoi-review`
 3. **Challenge about secrets**: ask if any new files contain tokens, passwords, or private data
-4. **Stage, commit, push**: `chezmoi git add -A && chezmoi git commit -m "message" && chezmoi git push`
-5. **Verify**: `chezmoi git status` should be clean
+4. **Review changes with the user**: show `chezmoi diff` and `chezmoi git diff` so the user can confirm what's about to be pushed. Never push without explicit approval.
+5. **Stage and commit** (only after user confirms):
+   ```bash
+   chezmoi git add .
+   chezmoi git -- commit -m "<description of what we're changing>"
+   ```
+6. **Push**: `chezmoi git push`
+7. **Verify**: `chezmoi git status` should be clean
 
 ## Pulling chezmoi
 
